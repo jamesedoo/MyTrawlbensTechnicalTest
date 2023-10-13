@@ -7,4 +7,8 @@ class DataRepository(private val dataApi: DataApi) {
     suspend fun getData(): List<DataItem> {
         return dataApi.getData()
     }
+
+    suspend fun getSpecificData(id: Int): DataItem {
+        return dataApi.getSpecificData(id)
+    }
 }

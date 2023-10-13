@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, "You clicked on item no. $position", Toast.LENGTH_SHORT).show()
 
                     val intent = Intent(this@MainActivity, DataDetailActivity::class.java)
-                    intent.putExtra("detail", it[position].id)
+                    intent.putExtra("id", it[position].id)
                     startActivity(intent)
                 }
             })
