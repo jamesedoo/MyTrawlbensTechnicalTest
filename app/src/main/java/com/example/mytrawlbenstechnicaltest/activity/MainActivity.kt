@@ -7,18 +7,22 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.mytrawlbenstechnicaltest.R
 import com.example.mytrawlbenstechnicaltest.adapter.DataAdapter
 import com.example.mytrawlbenstechnicaltest.databinding.ActivityMainBinding
+import com.example.mytrawlbenstechnicaltest.model.DataItem
 import com.example.mytrawlbenstechnicaltest.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
+    private lateinit var searchList: ArrayList<DataItem>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,9 +41,38 @@ class MainActivity : AppCompatActivity() {
             GridLayoutManager(this, 1, GridLayoutManager.VERTICAL, false)
 
         fetchData()
+        searchList = arrayListOf<DataItem>()
 
-        viewModel.dataLiveData.observe(this) {
-            val adapter = DataAdapter(it)
+        viewModel.dataLiveData.observe(this) { dataKomen ->
+            searchList.addAll(dataKomen)
+
+            binding.search.clearFocus()
+            binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    binding.search.clearFocus()
+                    return true
+                }
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    searchList.clear()
+                    val searchText = newText!!.toLowerCase(Locale.getDefault())
+                    if (searchText.isNotEmpty()){
+                        searchList.clear()
+                        dataKomen.forEach{
+                            if (it.email?.toLowerCase(Locale.getDefault())?.contains(searchText) == true) {
+                                searchList.add(it)
+                            }
+                        }
+                        binding.recyclerView.adapter!!.notifyDataSetChanged()
+                    } else {
+                        searchList.clear()
+                        searchList.addAll(dataKomen)
+                        binding.recyclerView.adapter!!.notifyDataSetChanged()
+                    }
+                    return false
+                }
+            })
+
+            val adapter = DataAdapter(searchList)
             val recyclerViewState = binding.recyclerView.layoutManager?.onSaveInstanceState()
             adapter.notifyDataSetChanged()
             binding.recyclerView.layoutManager?.onRestoreInstanceState(recyclerViewState)
@@ -49,13 +82,17 @@ class MainActivity : AppCompatActivity() {
 
             adapter.setOnItemClickListener(object : DataAdapter.onItemClickListener {
                 override fun onItemClick(position: Int) {
-                    Toast.makeText(this@MainActivity, "You clicked on item no. $position", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this@MainActivity, "You clicked on item no. $position", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "${searchList[position].id}", Toast.LENGTH_SHORT).show()
 
                     val intent = Intent(this@MainActivity, DataDetailActivity::class.java)
-                    intent.putExtra("id", it[position].id)
+                    intent.putExtra("id", searchList[position].id)
                     startActivity(intent)
                 }
             })
+
+
+
         }
     }
 
