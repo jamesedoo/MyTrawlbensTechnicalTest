@@ -41,6 +41,7 @@ class DataDetailActivity : AppCompatActivity() {
         fetchData(id)
 
         binding.back.setOnClickListener {
+            binding?.back?.isChecked = true
             onSupportNavigateUp()
         }
 

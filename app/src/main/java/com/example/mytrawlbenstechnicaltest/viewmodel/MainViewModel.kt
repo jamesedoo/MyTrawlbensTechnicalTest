@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.mytrawlbenstechnicaltest.entity.CommentEntity
 import com.example.mytrawlbenstechnicaltest.model.DataItem
-import com.example.mytrawlbenstechnicaltest.repository.Repository
 import com.example.mytrawlbenstechnicaltest.retrofit.RetrofitInstance
 import com.example.mytrawlbenstechnicaltest.source.DataRepository
 import kotlinx.coroutines.Dispatchers

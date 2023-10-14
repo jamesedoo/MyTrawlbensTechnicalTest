@@ -21,15 +21,18 @@ interface CommentDao {
     @Query("DELETE FROM comment_table WHERE comment_table.id = :id")
     suspend fun removeFromFavorite(id: Int): Int
 
-    @Update
-    fun update(commentEntity: CommentEntity)
+    @Query("SELECT * FROM comment_table")
+    fun getFavoriteUser(): LiveData<List<CommentEntity>>
 
-    @Delete
-    fun delete(commentEntity: CommentEntity)
-
-    @Query("delete from comment_table")
-    fun deleteAllNotes()
-
-    @Query("select * from comment_table order by id desc")
-    fun getAllNotes(): LiveData<List<CommentEntity>>
+//    @Update
+//    fun update(commentEntity: CommentEntity)
+//
+//    @Delete
+//    fun delete(commentEntity: CommentEntity)
+//
+//    @Query("delete from comment_table")
+//    fun deleteAllNotes()
+//
+//    @Query("select * from comment_table order by id desc")
+//    fun getAllNotes(): LiveData<List<CommentEntity>>
 }
