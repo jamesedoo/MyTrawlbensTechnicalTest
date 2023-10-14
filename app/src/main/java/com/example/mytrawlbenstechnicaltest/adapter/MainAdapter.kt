@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mytrawlbenstechnicaltest.R
-import com.example.mytrawlbenstechnicaltest.model.DataItem
+import com.example.mytrawlbenstechnicaltest.model.CommentItem
 
-class MainAdapter(private val dataList: List<DataItem>) : RecyclerView.Adapter<MainAdapter.ValueViewHolder>() {
+class MainAdapter(private val dataList: List<CommentItem>) : RecyclerView.Adapter<MainAdapter.ValueViewHolder>() {
     private lateinit var mlistener : onItemClickListener
 
     interface onItemClickListener {

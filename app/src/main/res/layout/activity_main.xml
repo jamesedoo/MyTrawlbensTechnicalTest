@@ -92,7 +92,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/app_bar_layout"
-        app:queryHint="Cari komen..."
+        app:queryHint="Search comment..."
         app:searchHintIcon="@null" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -102,6 +102,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search"

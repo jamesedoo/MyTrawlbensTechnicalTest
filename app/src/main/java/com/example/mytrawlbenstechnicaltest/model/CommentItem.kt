@@ -1,10 +1,8 @@
 package com.example.mytrawlbenstechnicaltest.model
 
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import com.google.gson.reflect.TypeToken
 
-data class DataItem(
+data class CommentItem(
 
     @field:SerializedName("name")
     val name: String? = null,

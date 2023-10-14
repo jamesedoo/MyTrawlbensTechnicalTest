@@ -7,8 +7,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mytrawlbenstechnicaltest.R
 import com.example.mytrawlbenstechnicaltest.entity.CommentEntity
-import com.example.mytrawlbenstechnicaltest.model.DataItem
-import java.util.Collections.addAll
 
 class CommentAdapter : RecyclerView.Adapter<CommentAdapter.ValueViewHolder>() {
     private lateinit var mlistener : onItemClickListener

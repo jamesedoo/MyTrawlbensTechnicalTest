@@ -1,12 +1,15 @@
 package com.example.mytrawlbenstechnicaltest.activity
 
+import android.Manifest
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -14,7 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.mytrawlbenstechnicaltest.R
 import com.example.mytrawlbenstechnicaltest.adapter.MainAdapter
 import com.example.mytrawlbenstechnicaltest.databinding.ActivityMainBinding
-import com.example.mytrawlbenstechnicaltest.model.DataItem
+import com.example.mytrawlbenstechnicaltest.model.CommentItem
 import com.example.mytrawlbenstechnicaltest.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -22,12 +25,27 @@ import java.util.Locale
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
-    private lateinit var searchList: ArrayList<DataItem>
+    private lateinit var searchList: ArrayList<CommentItem>
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                Toast.makeText(this, "Notifications permission granted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Notifications permission rejected", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
 
         hideActionBar()
         var toolbar = binding.myToolbar
@@ -41,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             GridLayoutManager(this, 1, GridLayoutManager.VERTICAL, false)
 
         fetchData()
-        searchList = arrayListOf<DataItem>()
+        searchList = arrayListOf<CommentItem>()
 
         viewModel.dataLiveData.observe(this) { dataKomen ->
             searchList.addAll(dataKomen)
@@ -82,24 +100,18 @@ class MainActivity : AppCompatActivity() {
 
             adapter.setOnItemClickListener(object : MainAdapter.onItemClickListener {
                 override fun onItemClick(position: Int) {
-//                    Toast.makeText(this@MainActivity, "You clicked on item no. $position", Toast.LENGTH_SHORT).show()
-                    Toast.makeText(this@MainActivity, "${searchList[position].id}", Toast.LENGTH_SHORT).show()
-
-                    val intent = Intent(this@MainActivity, DataDetailActivity::class.java)
+                    val intent = Intent(this@MainActivity, CommentDetailActivity::class.java)
                     intent.putExtra("id", searchList[position].id)
                     startActivity(intent)
                 }
             })
-
-
-
         }
     }
 
     private fun fetchData() {
         lifecycleScope.launchWhenCreated {
             launch {
-                viewModel.fetchData()
+                viewModel.getComments()
                 showLoading(true)
             }
         }
@@ -123,14 +135,8 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.favourite -> {
-                val intent = Intent(this, FavouriteActivity::class.java)
+                val intent = Intent(this, CommentFavouriteActivity::class.java)
                 startActivity(intent)
-                true
-//                Toast.makeText(
-//                    applicationContext,
-//                    "Masih dalam tahap pengembangan.",
-//                    Toast.LENGTH_LONG
-//                ).show()
                 true
             }
             else -> {

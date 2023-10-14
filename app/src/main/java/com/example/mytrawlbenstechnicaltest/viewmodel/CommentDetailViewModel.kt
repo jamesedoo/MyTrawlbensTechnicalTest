@@ -10,19 +10,20 @@ import androidx.lifecycle.viewModelScope
 import com.example.mytrawlbenstechnicaltest.dao.CommentDao
 import com.example.mytrawlbenstechnicaltest.database.CommentDatabase
 import com.example.mytrawlbenstechnicaltest.entity.CommentEntity
-import com.example.mytrawlbenstechnicaltest.model.DataItem
+import com.example.mytrawlbenstechnicaltest.model.CommentItem
 import com.example.mytrawlbenstechnicaltest.retrofit.RetrofitInstance
-import com.example.mytrawlbenstechnicaltest.source.DataRepository
+import com.example.mytrawlbenstechnicaltest.source.CommentRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
-class DataDetailViewModel(application: Application) : AndroidViewModel(application) {
+class CommentDetailViewModel(application: Application) : AndroidViewModel(application) {
     private val context = getApplication<Application>().applicationContext
-    private val dataRepository = DataRepository(RetrofitInstance.getService(), application)
-    val dataLiveData = MutableLiveData<DataItem>()
+    private val commentRepository = CommentRepository(RetrofitInstance.getService(), application)
+    private val _dataLiveData = MutableLiveData<CommentItem>()
+    val dataLiveData: LiveData<CommentItem> = _dataLiveData
 
     private var mCommentDao: CommentDao?
     private var mCommentDb: CommentDatabase? = CommentDatabase.getDatabase(application)
@@ -31,23 +32,15 @@ class DataDetailViewModel(application: Application) : AndroidViewModel(applicati
         mCommentDao = mCommentDb?.commentDao()
     }
 
-    fun fetchData(id: Int) {
+    fun getSpecificComment(id: Int) {
         viewModelScope.launch {
             try {
                 val data = withContext(Dispatchers.IO) {
-                    dataRepository.getSpecificData(id)
+                    commentRepository.getSpecificComment(id)
                 }
                 Log.d("APItestdetail", data.toString())
 
-//                val jsonString = data.toString()
-//                val gson = Gson()
-//                val dataItemListType = object : TypeToken<List<DataItem>>() {}.type
-//                val dataItems: List<DataItem> = gson.fromJson(jsonString, dataItemListType)
-//                dataItems.forEach { item ->
-//                    println("postId: ${item.postId}, id: ${item.id}, name: ${item.name}, email: ${item.email}, body: ${item.body}")
-//                }
-
-                dataLiveData.value = data
+                _dataLiveData.value = data
 
             } catch (e: HttpException) {
                 // Display a user-friendly error message
@@ -62,10 +55,7 @@ class DataDetailViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-//    private val repository = Repository(application)
-//    private val allComments = dataRepository.getAllComments()
-//CommentEntity(data.name, data.postId, data.id, data.body, data.email)
-    fun insert(name: String?, postId: Int?, id: Int?, body: String?, email: String?) {
+    fun addFavourite(name: String?, postId: Int?, id: Int?, body: String?, email: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             var comment = CommentEntity(
                 name,
@@ -74,31 +64,15 @@ class DataDetailViewModel(application: Application) : AndroidViewModel(applicati
                 body,
                 email
             )
-            mCommentDao?.insert(comment)
+            mCommentDao?.addFavourite(comment)
         }
     }
 
-    suspend fun checkUser(id: Int) = mCommentDao?.checkUser(id)
+    suspend fun checkFavourite(id: Int) = mCommentDao?.checkFavourite(id)
 
     fun removeFromFavorite(id: Int) {
         CoroutineScope(Dispatchers.IO).launch {
             mCommentDao?.removeFromFavorite(id)
         }
     }
-
-//    fun update(comment: CommentEntity) {
-//        dataRepository.update(comment)
-//    }
-//
-//    fun delete(comment: CommentEntity) {
-//        dataRepository.delete(comment)
-//    }
-//
-//    fun deleteAllNotes() {
-//        dataRepository.deleteAllComments()
-//    }
-//
-//    fun getAllNotes(): LiveData<List<CommentEntity>> {
-//        return allComments
-//    }
 }
