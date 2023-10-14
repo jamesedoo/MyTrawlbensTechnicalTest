@@ -4,23 +4,24 @@ import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.mytrawlbenstechnicaltest.entity.CommentEntity
 import com.example.mytrawlbenstechnicaltest.model.DataItem
+import com.example.mytrawlbenstechnicaltest.repository.Repository
 import com.example.mytrawlbenstechnicaltest.retrofit.RetrofitInstance
 import com.example.mytrawlbenstechnicaltest.source.DataRepository
-import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-    private val context = getApplication<Application>().applicationContext
-    private val dataRepository = DataRepository(RetrofitInstance.getService())
+//    private val context = getApplication<Application>().applicationContext
+    private val dataRepository = DataRepository(RetrofitInstance.getService(), application)
     val dataLiveData = MutableLiveData<List<DataItem>>()
+//    val searchList = MutableLiveData<List<DataItem>>()
 
     fun fetchData() {
         viewModelScope.launch {
@@ -42,14 +43,50 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
             } catch (e: HttpException) {
                 // Display a user-friendly error message
-                Toast.makeText(context, "Error: Resource not found", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "Error: Resource not found", Toast.LENGTH_SHORT).show()
                 Log.d("APItest", e.message.toString())
             } catch (e: Throwable) {
                 // Handle other types of exceptions
                 // Display a generic error message
-                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 Log.d("APItest", e.message.toString())
             }
         }
     }
+
+//    private val repository = Repository(application)
+//    private val allNotes = dataRepository.getAllComments()
+
+//    fun insert(comment: CommentEntity) {
+//        repository.insert(comment)
+//    }
+//
+//    fun update(comment: CommentEntity) {
+//        repository.update(comment)
+//    }
+//
+//    fun delete(comment: CommentEntity) {
+//        repository.delete(comment)
+//    }
+//
+//    fun deleteAllNotes() {
+//        repository.deleteAllComments()
+//    }
+//
+//    fun getAllNotes(): List<CommentEntity> {
+//        return allNotes
+//    }
+
+//    fun addDataToSearchList(dataItem: DataItem) {
+//        if (dataItem.email?.toLowerCase(Locale.getDefault())?.contains(searchText) == true) {
+//            searchList.value = listOf(dataItem)
+//        }
+//        searchList.value = dataLiveData.value
+//    }
+//    fun addAllDataToSearchList() {
+//        searchList.value = dataLiveData.value
+//    }
+//    fun clearSearchList() {
+//        searchList.value = listOf<DataItem>()
+//    }
 }
